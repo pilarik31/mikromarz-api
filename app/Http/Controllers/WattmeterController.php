@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\JsonResponse;
@@ -50,6 +51,10 @@ class WattmeterController extends Controller
         //
     }
 
+    /**
+     * 0-5: DateTime
+     * 7: Device
+     */
     public function download(): JsonResponse
     {
         $response = Http::get(Env::get('WATTMETER_URL'));
