@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Carbon\Carbon;
-use DateTime;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -54,25 +52,37 @@ class WattmeterController extends Controller
     /**
      * 0-5: DateTime
      * 7: Device
+     * 16-19: CH3 impulses
+     * 20: Hlavička - určuje způsob zpracování záznamu
+     * 
+     * @link https://sensorfor.com/www/manual/NT3_IG4.pdf
+     * @link http://sensorfor.com/www/index.php/lokalni
      */
     public function download(): JsonResponse
     {
         $response = Http::get(Env::get('WATTMETER_URL'));
         $split = Str::of($response->body())->split('/;/');
 
-        $datetime = '20' . $split->get(0) . '-' . $split->get(1) . '-' . $split->get(2) . ' ' . $split->get(3) . ':' . $split->get(4) . ':' . $split->get(5);
+        $datetime = '20' . $split->get(0) . '-' . $split->get(1) . '-'
+        . $split->get(2) . ' ' . $split->get(3) . ':' . $split->get(4)
+        . ':' . $split->get(5);
+
+        $test = ()
 
         $parsed = new Collection([
             'device' => $split->get(7),
-            'timestamp' => Carbon::createFromFormat('Y-m-d H:i:s', $datetime),
+            'timestamp' => Carbon::createFromFormat('Y-m-d H:i:s', $datetime)->format('Y-m-d H:i:s'),
         ]);
 
         dump($response->body());
         dump($split);
-        dump($parsed);
+
+
+        // dump($parsed);
 
         return new JsonResponse([
             'code' => 200,
+            ...$parsed->toArray()
         ]);
     }
 }

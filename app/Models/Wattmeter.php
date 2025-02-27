@@ -16,5 +16,5 @@ class Wattmeter extends Model
         'T1Imp',
         'T2Imp',
         
-    ]
+    ];
 }
